@@ -29,6 +29,10 @@ def create_app(testing=False):
     def init_route():
         return jsonify({'status':'ok'})
 
+    from app.views.user import user_bp
+
+
+    new_app.register_blueprint(user_bp, url_prefix='')
     return new_app
 
 

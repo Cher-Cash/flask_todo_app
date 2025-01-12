@@ -34,4 +34,5 @@ class Category(db.Model):
     title = Column(String(30))
     created_on = Column(DateTime, default=datetime.now)
     delete_on = Column(DateTime, default=None, nullable=True)
-    tasks = relationship('Tasks', backref='tasks', lazy=False)
+    user_id = Column(Integer, ForeignKey('users.id'), nullable=False)
+    tasks = relationship('Tasks', lazy=False)
