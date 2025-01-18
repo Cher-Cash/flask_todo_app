@@ -1,9 +1,10 @@
-from flask import Blueprint, render_template, abort, request, current_app, jsonify
-from app.models import Users, Category, Tasks
+from flask import Blueprint, request, jsonify
+from app.models import Users, Category
 from app.extansions import db
 
 
 category_bp = Blueprint('category_bp', __name__)
+
 
 @category_bp.route("/", methods=["POST"])
 def new_category():
