@@ -30,9 +30,11 @@ def create_app(testing=False):
         return jsonify({'status':'ok'})
 
     from app.views.user import user_bp
+    from app.views.category import category_bp
 
 
     new_app.register_blueprint(user_bp, url_prefix='')
+    new_app.register_blueprint(category_bp, url_prefix='/categories')
     return new_app
 
 
