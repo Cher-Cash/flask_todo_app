@@ -44,3 +44,10 @@ def patch_task(task_id):
     db.session.commit()
     return jsonify({"message": f"Задача {task.title} успешно изменена"}), 200
 
+
+@task_bp.route("/<int:task_id>", methods=["DELETE"])
+def delete_task(task_id):
+    task: Tasks = Tasks.query.get_or_404(task_id)
+    task.delete_on = datetime.now()
+    db.session.commit()
+    return jsonify({"message": f"Задача {task.title} успешно удалена"}), 200
