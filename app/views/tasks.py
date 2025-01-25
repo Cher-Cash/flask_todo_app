@@ -1,5 +1,10 @@
 from datetime import datetime
+from app.utils import to_dict
+from alembic.util.sqla_compat import AUTOINCREMENT_DEFAULT
 from flask import Blueprint, request, jsonify
+from sqlalchemy.sql.util import find_tables
+from werkzeug.datastructures import Authorization
+
 from app.models import Users, Category, Tasks
 from app.extansions import db
 
@@ -51,3 +56,15 @@ def delete_task(task_id):
     task.delete_on = datetime.now()
     db.session.commit()
     return jsonify({"message": f"Задача {task.title} успешно удалена"}), 200
+
+
+#Залипуха для разработки
+def get_user_id(request):
+    return 1
+
+
+@task_bp.route("/", methods=["GET"])
+def task_list():
+    user_id = get_user_id(request)
+    tasks = Tasks.query.filter_by(user_id=user_id).all()
+    return jsonify([to_dict(task) for task in tasks])
