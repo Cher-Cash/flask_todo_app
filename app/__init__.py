@@ -31,10 +31,12 @@ def create_app(testing=False):
 
     from app.views.user import user_bp
     from app.views.category import category_bp
+    from app.views.tasks import task_bp
 
 
     new_app.register_blueprint(user_bp, url_prefix='')
     new_app.register_blueprint(category_bp, url_prefix='/categories')
+    new_app.register_blueprint(task_bp, url_prefix='/tasks')
     return new_app
 
 
