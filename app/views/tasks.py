@@ -64,6 +64,17 @@ def get_user_id(request):  # noqa: ARG001
 
 @task_bp.route("/", methods=["GET"])
 def task_list():
+    status = request.args.get("status")
+    date_ = request.args.get("dead_line")
+    dead_line = datetime.strptime(date_, "%Y-%m-%d/%H:%M:%S")
+    start_of_day = dead_line.replace(hour=0, minute=0, second=0, microsecond=0)
+    category_id = request.args.get("category_id")
     user_id = get_user_id(request)
-    tasks = Tasks.query.filter_by(user_id=user_id).all()
-    return jsonify([to_dict(task) for task in tasks])
+    tasks = Tasks.query.filter(Tasks.delete_on.is_(None)).filter_by(user_id=user_id)
+    if category_id:
+        tasks = tasks.filter_by(category_id=category_id)
+    if status:
+        tasks = tasks.filter_by(status=status)
+    if dead_line:
+        tasks = tasks.filter(Tasks.dead_line < dead_line).filter(Tasks.dead_line >= start_of_day)
+    return jsonify([to_dict(task) for task in tasks.all()])
