@@ -28,3 +28,19 @@ def new_task():
     db.session.add(n_task)
     db.session.commit()
     return jsonify({"message": f"Задача успешно создана"}), 200
+
+
+@task_bp.route("/<int:task_id>", methods=["PATCH"])
+def patch_task(task_id):
+    data = request.get_json()
+    if not data:
+        return jsonify({"error": "Не был передан JSON"}), 400
+    task: Tasks = Tasks.query.get_or_404(task_id)
+    for key,value in data.items():
+        if hasattr(task, key):
+            if key == "dead_line":
+                value = datetime.strptime(value, "%Y-%m-%d %H:%M:%S")
+            setattr(task, key, value)
+    db.session.commit()
+    return jsonify({"message": f"Задача {task.title} успешно изменена"}), 200
+
