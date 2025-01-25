@@ -1,40 +1,35 @@
 from dotenv import load_dotenv
-
 from flask import Flask, jsonify
-from flask_admin.contrib.sqla import ModelView
 from flask_admin import Admin
+from flask_admin.contrib.sqla import ModelView
 from flask_migrate import Migrate
 
 from app.extansions import db
-from app.models import Tasks, Users, Category
+from app.models import Category, Tasks, Users
 
-
-admin_ext = Admin(template_mode='bootstrap3')
+admin_ext = Admin(template_mode="bootstrap3")
 migrate_ext = Migrate()
 load_dotenv()
 
 
-def create_app(testing=False):
+def create_app():
     new_app = Flask(__name__)
-    if testing:
-        new_app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///:memory:"
-    else:
-        new_app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///mydatabase.db"
+    new_app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///mydatabase.db"
     db.init_app(new_app)
     migrate_ext.init_app(new_app, db)
     admin_ext.init_app(new_app)
 
-    @new_app.route('/ping')
+    @new_app.route("/ping")
     def init_route():
-        return jsonify({'status': 'ok'})
+        return jsonify({"status": "ok"})
 
-    from app.views.user import user_bp
     from app.views.category import category_bp
     from app.views.tasks import task_bp
+    from app.views.user import user_bp
 
-    new_app.register_blueprint(user_bp, url_prefix='')
-    new_app.register_blueprint(category_bp, url_prefix='/categories')
-    new_app.register_blueprint(task_bp, url_prefix='/tasks')
+    new_app.register_blueprint(user_bp, url_prefix="")
+    new_app.register_blueprint(category_bp, url_prefix="/categories")
+    new_app.register_blueprint(task_bp, url_prefix="/tasks")
     return new_app
 
 

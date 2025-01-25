@@ -1,15 +1,12 @@
 from datetime import datetime
-from app.utils import to_dict
-from alembic.util.sqla_compat import AUTOINCREMENT_DEFAULT
-from flask import Blueprint, request, jsonify
-from sqlalchemy.sql.util import find_tables
-from werkzeug.datastructures import Authorization
 
-from app.models import Users, Category, Tasks
+from flask import Blueprint, jsonify, request
+
 from app.extansions import db
+from app.models import Category, Tasks, Users
+from app.utils import to_dict
 
-
-task_bp = Blueprint('task_bp', __name__)
+task_bp = Blueprint("task_bp", __name__)
 
 
 @task_bp.route("/", methods=["POST"])
@@ -28,7 +25,7 @@ def new_task():
     category = Category.query.get_or_404(category_id)
     user = Users.query.get_or_404(user_id)
     n_task = Tasks(title=title, description=description, user_id=user.id, created_on=created_on,
-                   category_id=category.id, status=status, dead_line=dead_line
+                   category_id=category.id, status=status, dead_line=dead_line,
                    )
     db.session.add(n_task)
     db.session.commit()
@@ -41,10 +38,12 @@ def patch_task(task_id):
     if not data:
         return jsonify({"error": "Не был передан JSON"}), 400
     task: Tasks = Tasks.query.get_or_404(task_id)
-    for key, value in data.items():
+    for key in data:
         if hasattr(task, key):
-            if key == "dead_line":
-                value = datetime.strptime(value, "%Y-%m-%d %H:%M:%S")
+            if key == "dead_line" and data[key]:
+                value = datetime.strptime(data[key], "%Y-%m-%d %H:%M:%S")
+            else:
+                value = data[key]
             setattr(task, key, value)
     db.session.commit()
     return jsonify({"message": f"Задача {task.title} успешно изменена"}), 200
@@ -58,8 +57,8 @@ def delete_task(task_id):
     return jsonify({"message": f"Задача {task.title} успешно удалена"}), 200
 
 
-#Залипуха для разработки
-def get_user_id(request):
+# Залипуха для разработки
+def get_user_id(request):  # noqa: ARG001
     return 1
 
 

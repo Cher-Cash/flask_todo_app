@@ -1,9 +1,9 @@
-from flask import Blueprint, request, jsonify
-from app.models import Users, Category, Tasks
+from flask import Blueprint, jsonify, request
+
 from app.extansions import db
+from app.models import Category, Tasks, Users
 
-
-user_bp = Blueprint('user', __name__)
+user_bp = Blueprint("user", __name__)
 
 
 @user_bp.route("/user", methods=["POST"])
@@ -12,8 +12,7 @@ def new_user():
     if data:
         name = data.get("username")
         return jsonify({"username": name}), 200
-    else:
-        return jsonify({"error": "Не был передан JSON"}), 400
+    return jsonify({"error": "Не был передан JSON"}), 400
     user = Users(title=name)
     db.session.add(user)
     db.session.commit()
@@ -26,7 +25,7 @@ def patch_user(user_id):
     data = request.get_json()
     if not data:
         return jsonify({"error": "Пользователь не найден"}), 404
-    user.title = data.get('username', user.title)
+    user.title = data.get("username", user.title)
     db.session.commit()
     return jsonify({"message": f"Пользователь {user.title} обновлен"}), 200
 

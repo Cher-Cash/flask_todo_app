@@ -1,0 +1,11 @@
+line-length = 100
+
+exclude = [
+    ".venv",
+    "migrations",
+    "app/route_test.py"
+]
+
+[lint]
+select = ["ALL"]
+ignore = ["D10", "ANN", "RUF001", "DTZ"]

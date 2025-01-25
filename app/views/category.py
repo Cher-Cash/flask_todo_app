@@ -1,9 +1,9 @@
-from flask import Blueprint, request, jsonify
-from app.models import Users, Category
+from flask import Blueprint, jsonify, request
+
 from app.extansions import db
+from app.models import Category, Users
 
-
-category_bp = Blueprint('category_bp', __name__)
+category_bp = Blueprint("category_bp", __name__)
 
 
 @category_bp.route("/", methods=["POST"])
