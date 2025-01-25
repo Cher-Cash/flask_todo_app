@@ -1,7 +1,6 @@
-import os
 from dotenv import load_dotenv
 
-from flask import Flask, render_template, request, redirect, url_for, abort, jsonify
+from flask import Flask, jsonify
 from flask_admin.contrib.sqla import ModelView
 from flask_admin import Admin
 from flask_migrate import Migrate
@@ -27,12 +26,11 @@ def create_app(testing=False):
 
     @new_app.route('/ping')
     def init_route():
-        return jsonify({'status':'ok'})
+        return jsonify({'status': 'ok'})
 
     from app.views.user import user_bp
     from app.views.category import category_bp
     from app.views.tasks import task_bp
-
 
     new_app.register_blueprint(user_bp, url_prefix='')
     new_app.register_blueprint(category_bp, url_prefix='/categories')
