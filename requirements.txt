@@ -5,3 +5,4 @@ flask_admin
 pytest
 python-dotenv
 flask
+flask-cors

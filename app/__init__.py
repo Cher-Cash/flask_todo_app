@@ -5,6 +5,7 @@ from flask import Flask, jsonify
 from flask_admin import Admin
 from flask_admin.contrib.sqla import ModelView
 from flask_migrate import Migrate
+from flask_cors import CORS
 
 from app.extansions import db
 from app.models import Category, Tasks, Users
@@ -20,6 +21,7 @@ def create_app():
     db.init_app(new_app)
     migrate_ext.init_app(new_app, db)
     admin_ext.init_app(new_app)
+    CORS(new_app, resources={r"/*": {"origins": "*"}})
 
     @new_app.route("/ping")
     def init_route():
