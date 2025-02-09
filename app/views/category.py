@@ -2,7 +2,6 @@ from flask import Blueprint, jsonify, request
 
 from app.extansions import db
 from app.models import Category, Users
-from app.utils import to_dict
 
 category_bp = Blueprint("category_bp", __name__)
 
@@ -33,13 +32,3 @@ def patch_category(category_id):
     category.title = title
     db.session.commit()
     return jsonify({"message": f"Категория {category.title} обновлена"}), 200
-
-
-@category_bp.route("/", methods=["GET"])
-def get_category():
-    data = request.get_json()
-    if not data:
-        return jsonify({"error": "Не был передан JSON"}), 400
-    user_id = data.get("user_id")
-    categories = Category.query.filter_by(user_id=user_id).all()
-    return jsonify([to_dict(category) for category in categories])
