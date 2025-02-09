@@ -9,10 +9,9 @@ user_bp = Blueprint("user", __name__)
 @user_bp.route("/user", methods=["POST"])
 def new_user():
     data = request.get_json()
-    if data:
-        name = data.get("username")
-        return jsonify({"username": name}), 200
-    return jsonify({"error": "Не был передан JSON"}), 400
+    if not data:
+        return jsonify({"error": "Не был передан JSON"}), 400
+    name = data.get("username")
     user = Users(title=name)
     db.session.add(user)
     db.session.commit()
