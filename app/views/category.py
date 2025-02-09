@@ -2,7 +2,6 @@ from flask import Blueprint, jsonify, request
 
 from app.extansions import db
 from app.models import Category, Users
-from app.utils import to_dict
 
 category_bp = Blueprint("category_bp", __name__)
 
