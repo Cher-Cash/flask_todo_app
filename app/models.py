@@ -13,7 +13,8 @@ class Tasks(db.Model):  # ignore: typing
     description = Column(String(200))
     status = Column(String(30))
     created_on = Column(DateTime, default=datetime.now)
-    dead_line = Column(DateTime, default=datetime.now)
+    dead_line = Column(DateTime, nullable=True)
+    done_on = Column(DateTime, nullable=True)
 
     category_id = Column(Integer, ForeignKey("category.id"), nullable=False)
     delete_on = Column(DateTime, default=None, nullable=True)
