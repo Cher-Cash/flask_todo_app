@@ -27,7 +27,7 @@ def create_app():
     from app.views.tasks import task_bp
     from app.views.user import user_bp
 
-    new_app.register_blueprint(user_bp, url_prefix="")
+    new_app.register_blueprint(user_bp, url_prefix="/user")
     new_app.register_blueprint(category_bp, url_prefix="/categories")
     new_app.register_blueprint(task_bp, url_prefix="/tasks")
     return new_app
