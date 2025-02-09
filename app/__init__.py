@@ -1,3 +1,5 @@
+import typing
+
 from dotenv import load_dotenv
 from flask import Flask, jsonify
 from flask_admin import Admin
@@ -34,10 +36,25 @@ def create_app():
 
 
 class MyModelView(ModelView):
-    column_display_all_relations = True
     column_hide_backrefs = False
 
 
-admin_ext.add_view(MyModelView(Tasks, db.session))
-admin_ext.add_view(MyModelView(Users, db.session))
-admin_ext.add_view(MyModelView(Category, db.session))
+class UsersView(MyModelView):
+    form_columns: typing.ClassVar = ["title", "created_on", "delete_on"]
+
+
+class CategoryView(MyModelView):
+    form_columns: typing.ClassVar = ["title", "delete_on", "user_id"]
+
+
+class TasksView(MyModelView):
+    column_hide_backrefs = False
+    column_list = ("id", "title", "description", "status", "created_on", "dead_line",
+                   "user", "category_id", "delete_on", "parent_id")
+    form_columns: typing.ClassVar = ["title", "description", "user_id", "status", "dead_line",
+                                     "category_id", "delete_on", "parent_id"]
+
+
+admin_ext.add_view(TasksView(Tasks, db.session))
+admin_ext.add_view(UsersView(Users, db.session))
+admin_ext.add_view(CategoryView(Category, db.session))
