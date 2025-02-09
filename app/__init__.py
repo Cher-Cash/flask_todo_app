@@ -50,9 +50,9 @@ class CategoryView(MyModelView):
 class TasksView(MyModelView):
     column_hide_backrefs = False
     column_list = ("id", "title", "description", "status", "created_on", "dead_line",
-                   "user", "category_id", "delete_on", "parent_id")
+                   "user", "category_id", "delete_on", "parent_id", "done_on")
     form_columns: typing.ClassVar = ["title", "description", "user_id", "status", "dead_line",
-                                     "category_id", "delete_on", "parent_id"]
+                                     "category_id", "delete_on", "parent_id", "done_on"]
 
 
 admin_ext.add_view(TasksView(Tasks, db.session))
