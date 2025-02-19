@@ -31,6 +31,7 @@ class Users(db.Model):
     title = Column(String(50))
     created_on = Column(DateTime, default=datetime.now)
     delete_on = Column(DateTime, default=None, nullable=True)
+    token = Column(String(20), nullable=True)
     tasks = relationship("Tasks", back_populates="user")
     categories = relationship("Category", back_populates="user")
 

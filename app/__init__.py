@@ -40,10 +40,12 @@ class MyModelView(ModelView):
 
 
 class UsersView(MyModelView):
-    form_columns: typing.ClassVar = ["title", "created_on", "delete_on"]
+    column_list = ("id", "title", "created_on", "delete_on", "token")
+    form_columns: typing.ClassVar = ["title", "created_on", "delete_on", "token"]
 
 
 class CategoryView(MyModelView):
+    column_list = ["id", "title", "delete_on", "user_id"]
     form_columns: typing.ClassVar = ["title", "delete_on", "user_id"]
 
 
