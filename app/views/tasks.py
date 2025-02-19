@@ -2,10 +2,10 @@ from datetime import datetime
 
 from flask import Blueprint, jsonify, request
 
+from app.auth import token_required
 from app.extansions import db
 from app.models import Category, Tasks
 from app.utils import to_dict
-from app.auth import token_required
 
 task_bp = Blueprint("task_bp", __name__)
 

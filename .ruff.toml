@@ -8,4 +8,4 @@ exclude = [
 
 [lint]
 select = ["ALL"]
-ignore = ["D10", "ANN", "RUF001", "DTZ"]
+ignore = ["D10", "ANN", "RUF001", "DTZ", "RUF012"]

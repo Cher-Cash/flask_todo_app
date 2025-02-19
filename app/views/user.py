@@ -1,9 +1,9 @@
 from flask import Blueprint, jsonify, request
 
+from app.auth import token_required
 from app.extansions import db
 from app.models import Category, Users
 from app.utils import to_dict
-from app.auth import token_required
 
 user_bp = Blueprint("user", __name__)
 
