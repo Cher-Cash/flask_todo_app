@@ -3,7 +3,7 @@ from datetime import datetime
 from flask import Blueprint, jsonify, request
 
 from app.extansions import db
-from app.models import Category, Tasks, Users
+from app.models import Category, Tasks
 from app.utils import to_dict
 from app.auth import token_required
 
@@ -23,9 +23,11 @@ def new_task(user):
     status = data.get("status")
     date = data.get("dead_line")
     dead_line = datetime.strptime(date, "%Y-%m-%d %H:%M:%S")
-    category = Category.query.get_or_404(category_id)
+    task_category = Category.query.get_or_404(category_id)
+    if task_category.user_id != user.id:
+        return jsonify({"error": "Invalid category"}), 403
     n_task = Tasks(title=title, description=description, user_id=user.id, created_on=created_on,
-                   category_id=category.id, status=status, dead_line=dead_line,
+                   category_id=task_category.id, status=status, dead_line=dead_line,
                    )
     db.session.add(n_task)
     db.session.commit()
@@ -39,6 +41,9 @@ def patch_task(task_id, user):
     if not data:
         return jsonify({"error": "Не был передан JSON"}), 400
     task: Tasks = Tasks.query.get_or_404(task_id)
+    category_id = data.get("category_id")
+    if category_id and not Category.query.filter_by(id=category_id, user_id=user.id).one_or_none():
+        return jsonify({"error": "Invalid user"}), 403
     if task.user_id != user.id:
         return jsonify({"error": "Invalid user"}), 403
     for key in data:
@@ -61,11 +66,6 @@ def delete_task(task_id, user):
     task.delete_on = datetime.now()
     db.session.commit()
     return jsonify({"message": f"Задача {task.title} успешно удалена"}), 200
-
-
-# Залипуха для разработки
-def get_user_id(request):  # noqa: ARG001
-    return 1
 
 
 @task_bp.route("/", methods=["GET"])
