@@ -78,3 +78,9 @@ def task_list():
         start_of_day = dead_line.replace(hour=0, minute=0, second=0, microsecond=0)
         tasks = tasks.filter(Tasks.dead_line < dead_line).filter(Tasks.dead_line >= start_of_day)
     return jsonify([to_dict(task) for task in tasks.all()])
+
+
+@task_bp.route("/<int:task_id>", methods=["GET"])
+def task_from_id(task_id):
+    task = Tasks.query.get_or_404(task_id)
+    return jsonify(to_dict(task))
