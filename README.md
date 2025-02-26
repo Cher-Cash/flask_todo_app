@@ -23,3 +23,11 @@ $ pip install -r requirements.txt
     $ mkdir -p instance
     $ flask db upgrade
 ```
+
+## Установить SECRET_KEY в переменную окружения, либо проставить значение по умолчанию в файле app/__init__.py
+```python
+def create_app():
+    load_dotenv()
+    new_app = Flask(__name__)
+    new_app.secret_key = os.getenv("SECRET_KEY") # вот в этом месте
+```

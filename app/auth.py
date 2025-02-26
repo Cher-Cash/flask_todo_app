@@ -8,7 +8,7 @@ from app.models import Users
 def token_required(f):
     @wraps(f)
     def decorator(*args, **kwargs):
-        token = request.headers.get("Authorization")
+        token = request.headers.get("token")
         user_id = request.headers.get("id")
         if not token or not user_id:
             return jsonify({"message": "Token or user_id is missing!"}), 401

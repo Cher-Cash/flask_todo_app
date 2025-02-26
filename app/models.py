@@ -16,7 +16,7 @@ class Tasks(db.Model):  # ignore: typing
     dead_line = Column(DateTime, nullable=True)
     done_on = Column(DateTime, nullable=True)
 
-    category_id = Column(Integer, ForeignKey("category.id"), nullable=False)
+    category_id = Column(Integer, ForeignKey("category.id"), nullable=True)
     delete_on = Column(DateTime, default=None, nullable=True)
     parent_id = Column(Integer, ForeignKey("tasks.id"), nullable=True)
     parent = relationship("Tasks", remote_side=[id], backref="children")
