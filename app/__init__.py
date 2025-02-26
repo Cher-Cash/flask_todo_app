@@ -1,3 +1,4 @@
+import os
 import typing
 
 from dotenv import load_dotenv
@@ -12,11 +13,12 @@ from app.models import Category, Tasks, Users
 
 admin_ext = Admin(template_mode="bootstrap3")
 migrate_ext = Migrate()
-load_dotenv()
 
 
 def create_app():
+    load_dotenv()
     new_app = Flask(__name__)
+    new_app.secret_key = os.getenv("SECRET_KEY")
     new_app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///mydatabase.db"
     new_app.config["CORS_HEADERS"] = "Content-Type"
     db.init_app(new_app)
