@@ -6,3 +6,6 @@ pytest
 python-dotenv
 flask
 flask-cors
+flask-admin
+wtforms
+flask-wtf
