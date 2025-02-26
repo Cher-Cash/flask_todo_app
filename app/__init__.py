@@ -4,6 +4,7 @@ from dotenv import load_dotenv
 from flask import Flask, jsonify
 from flask_admin import Admin
 from flask_admin.contrib.sqla import ModelView
+from flask_cors import CORS
 from flask_migrate import Migrate
 
 from app.extansions import db
@@ -17,9 +18,11 @@ load_dotenv()
 def create_app():
     new_app = Flask(__name__)
     new_app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///mydatabase.db"
+    new_app.config["CORS_HEADERS"] = "Content-Type"
     db.init_app(new_app)
     migrate_ext.init_app(new_app, db)
     admin_ext.init_app(new_app)
+    CORS(new_app, resources={r"/*": {"origins": "*"}})
 
     @new_app.route("/ping")
     def init_route():
