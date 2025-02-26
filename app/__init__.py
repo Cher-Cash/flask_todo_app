@@ -5,8 +5,12 @@ from dotenv import load_dotenv
 from flask import Flask, jsonify
 from flask_admin import Admin
 from flask_admin.contrib.sqla import ModelView
+from flask_admin.form.widgets import DateTimePickerWidget
 from flask_cors import CORS
 from flask_migrate import Migrate
+from flask_wtf import FlaskForm
+from wtforms import DateTimeField, SelectField, StringField
+from wtforms.validators import DataRequired, Optional
 
 from app.extansions import db
 from app.models import Category, Tasks, Users
@@ -40,6 +44,31 @@ def create_app():
     return new_app
 
 
+class TaskForm(FlaskForm):
+    STATUS_CHOICES = [
+        ("new", "New"),
+        ("in process", "In Process"),
+        ("completed", "Completed"),
+        ("on hold", "On Hold"),
+        ("delayed", "Delayed"),
+    ]
+
+    title = StringField("Title", validators=[DataRequired()])
+    description = StringField("Description", validators=[DataRequired()])
+    user_id = StringField("User ID", validators=[DataRequired()])
+    status = SelectField("Status", choices=STATUS_CHOICES, validators=[DataRequired()])
+
+    dead_line = DateTimeField("Dead Line", widget=DateTimePickerWidget(),
+                              format="%Y-%m-%d %H:%M:%S", validators=[Optional()])
+    delete_on = DateTimeField("Delete On", widget=DateTimePickerWidget(),
+                              format="%Y-%m-%d %H:%M:%S", validators=[Optional()])
+    done_on = DateTimeField("Done On", widget=DateTimePickerWidget(),
+                            format="%Y-%m-%d %H:%M:%S", validators=[Optional()])
+
+    category_id = StringField("Category ID")
+    parent_id = StringField("Parent ID")
+
+
 class MyModelView(ModelView):
     column_hide_backrefs = False
 
@@ -55,6 +84,7 @@ class CategoryView(MyModelView):
 
 
 class TasksView(MyModelView):
+    form = TaskForm
     column_hide_backrefs = False
     column_list = ("id", "title", "description", "status", "created_on", "dead_line",
                    "user", "category_id", "delete_on", "parent_id", "done_on")
