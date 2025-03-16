@@ -9,3 +9,4 @@ flask-cors
 flask-admin
 wtforms
 flask-wtf
+pytest

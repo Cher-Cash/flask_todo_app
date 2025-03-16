@@ -10,10 +10,14 @@ category_bp = Blueprint("category_bp", __name__)
 @category_bp.route("/", methods=["POST"])
 @token_required
 def new_category(user):
+    if not request.is_json:
+        return jsonify({"error": "Content-Type must be application/json"}), 415
     data = request.get_json()
     if not data:
-        return jsonify({"error": "Не был передан JSON"}), 400
+        return jsonify({"error": "Тело запроса пустое"}), 415
     name = data.get("title")
+    if not name:
+        return jsonify({"error": "Название категории обязательно"}), 400
     n_category = Category(title=name, user_id=user.id)
     db.session.add(n_category)
     db.session.commit()

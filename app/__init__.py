@@ -19,11 +19,16 @@ admin_ext = Admin(template_mode="bootstrap3")
 migrate_ext = Migrate()
 
 
-def create_app():
+def create_app(testing=False):
     load_dotenv()
     new_app = Flask(__name__)
+
+    if testing:
+        new_app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///:memory:"
+    else:
+        new_app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///mydatabase.db"
+
     new_app.secret_key = os.getenv("SECRET_KEY")
-    new_app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///mydatabase.db"
     new_app.config["CORS_HEADERS"] = "Content-Type"
     db.init_app(new_app)
     migrate_ext.init_app(new_app, db)
