@@ -10,6 +10,8 @@ user_bp = Blueprint("user", __name__)
 
 @user_bp.route("/", methods=["POST"])
 def new_user():
+    if not request.is_json:
+        return jsonify({"error": "Content-Type must be application/json"}), 415
     data = request.get_json()
     if not data:
         return jsonify({"error": "Не был передан JSON"}), 400
@@ -23,9 +25,11 @@ def new_user():
 @user_bp.route("/", methods=["PATCH"])
 @token_required
 def patch_user(user):
+    if not request.is_json:
+        return jsonify({"error": "Content-Type must be application/json"}), 415
     data = request.get_json()
     if not data:
-        return jsonify({"error": "Не получены данные"}), 404
+        return jsonify({"error": "Не получены данные"}), 400
     user.title = data.get("username", user.title)
     db.session.commit()
     return jsonify({"message": f"Пользователь {user.title} обновлен"}), 200
@@ -35,4 +39,4 @@ def patch_user(user):
 @token_required
 def get_user_categories(user):
     categories = Category.query.filter_by(user_id=user.id).all()
-    return jsonify([to_dict(category) for category in categories])
+    return jsonify([to_dict(category) for category in categories]), 200
