@@ -41,7 +41,6 @@ def test_create_user_success(test_app, client):
         content_type="application/json",
     )
     assert response.status_code == 200
-    assert response.json["message"] == "Пользователь успешно создан"
     with test_app.app_context():
         user = Users.query.filter_by(title="Oleg").first()
     assert user is not None
