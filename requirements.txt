@@ -10,3 +10,4 @@ flask-admin
 wtforms
 flask-wtf
 pytest
+dotenv
