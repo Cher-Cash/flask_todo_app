@@ -19,7 +19,7 @@ admin_ext = Admin(template_mode="bootstrap3")
 migrate_ext = Migrate()
 
 
-def create_app(testing=False): # noqa: FBT002
+def create_app(testing=False):  # noqa: FBT002
     load_dotenv()
     new_app = Flask(__name__)
 
