@@ -2,7 +2,7 @@ import pytest
 import json
 from app import create_app
 from app.extansions import db
-from app.models import Users, Category, Tasks
+from app.models import Users, Category
 
 
 @pytest.fixture
@@ -44,7 +44,8 @@ def test_create_task_success(client, test_app):
         category = Category.query.filter_by(title="TestCategory").first()
     response = client.post(
         "/tasks/",
-        data=json.dumps({"title": "Test Task", "description": "test", "category_id": category.id, "status": "new", "dead_line": "2025-01-26 16:00:00"}),
+        data=json.dumps({"title": "Test Task", "description": "test", "category_id": category.id,
+                         "status": "new", "dead_line": "2025-01-26 16:00:00"}),
         content_type="application/json",
         headers={"token": user.token, "id": user.id}
     )
@@ -115,6 +116,3 @@ def test_create_task_invalid_deadline_format(client, test_app):
     response = client.post('/tasks/', json=data, headers={"token": user.token, "id": user.id})
     assert response.status_code == 400
     assert response.json["error"] == "Incorrect date format"
-
-
-
