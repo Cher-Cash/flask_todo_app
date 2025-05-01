@@ -10,7 +10,6 @@ def token_required(f):
     def decorator(*args, **kwargs):
         token = request.headers.get("token")
         user_id = request.headers.get("id")
-        print(f'token - {token} user_id - {user_id}')
         if not token or not user_id:
             return jsonify({"error": "Token or user_id is missing!"}), 401
         user_id = int(user_id)

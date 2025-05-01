@@ -1,8 +1,10 @@
-import pytest
 import json
+
+import pytest
+
 from app import create_app
 from app.extansions import db
-from app.models import Users, Category
+from app.models import Category, Users
 
 
 @pytest.fixture
@@ -12,7 +14,7 @@ def test_app():
         {
             "SQLALCHEMY_DATABASE_URI": "sqlite:///:memory:",
             "SQLALCHEMY_TRACK_MODIFICATIONS": False,
-        }
+        },
     )
     with app.app_context():
         db.create_all()
@@ -47,7 +49,7 @@ def test_create_task_success(client, test_app):
         data=json.dumps({"title": "Test Task", "description": "test", "category_id": category.id,
                          "status": "new", "dead_line": "2025-01-26 16:00:00"}),
         content_type="application/json",
-        headers={"token": user.token, "id": user.id}
+        headers={"token": user.token, "id": user.id},
     )
     assert response.status_code == 200
     assert response.json["message"] == "Задача успешно создана"
@@ -58,7 +60,7 @@ def test_create_task_missing_json(client, test_app):
         user = Users.query.filter_by(title="testuser").first()
     response = client.post(
         "/tasks/",
-        headers={"token": user.token, "id": user.id}
+        headers={"token": user.token, "id": user.id},
     )
     assert response.status_code == 415
     assert response.json["error"] == "Content-Type must be application/json"
@@ -75,18 +77,18 @@ def test_create_task_invalid_category(client, test_app):
         "description": "Test",
         "category_id": 999,
         "status": "new",
-        "dead_line": "2025-04-10 12:00:00"
+        "dead_line": "2025-04-10 12:00:00",
     }
-    response = client.post('/tasks/', json=data, headers={"token": user.token, "id": user.id})
+    response = client.post("/tasks/", json=data, headers={"token": user.token, "id": user.id})
     assert response.status_code == 404
     data = {
         "title": "Test Task",
         "description": "Test",
         "category_id": category2.id,
         "status": "new",
-        "dead_line": "2025-04-10 12:00:00"
+        "dead_line": "2025-04-10 12:00:00",
     }
-    response = client.post('/tasks/', json=data, headers={"token": user.token, "id": user.id})
+    response = client.post("/tasks/", json=data, headers={"token": user.token, "id": user.id})
     assert response.status_code == 403
     assert response.json["error"] == "Invalid category"
     data = {
@@ -94,9 +96,9 @@ def test_create_task_invalid_category(client, test_app):
         "description": "Test",
         "category_id": category.id,
         "status": "new",
-        "dead_line": "2025-04-10 12:00:00"
+        "dead_line": "2025-04-10 12:00:00",
     }
-    response = client.post('/tasks/', json=data, headers={"token": user2.token, "id": user2.id})
+    response = client.post("/tasks/", json=data, headers={"token": user2.token, "id": user2.id})
     assert response.status_code == 403
     assert response.json["error"] == "Invalid category"
 
@@ -111,8 +113,8 @@ def test_create_task_invalid_deadline_format(client, test_app):
         "description": "Test",
         "category_id": category.id,
         "status": "open",
-        "dead_line": "invalid_date"
+        "dead_line": "invalid_date",
     }
-    response = client.post('/tasks/', json=data, headers={"token": user.token, "id": user.id})
+    response = client.post("/tasks/", json=data, headers={"token": user.token, "id": user.id})
     assert response.status_code == 400
     assert response.json["error"] == "Incorrect date format"

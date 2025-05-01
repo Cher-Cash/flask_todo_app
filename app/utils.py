@@ -9,5 +9,4 @@ def to_dict(instance):
 def generate_token(username: str) -> str:
     now = datetime.now().isoformat()
     raw_string = f"{username}:{now}"
-    token = hashlib.sha256(raw_string.encode()).hexdigest()[:20]
-    return token
+    return hashlib.sha256(raw_string.encode()).hexdigest()[:20]

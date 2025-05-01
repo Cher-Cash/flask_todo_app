@@ -3,12 +3,11 @@ from flask import Blueprint, jsonify, request
 from app.auth import token_required
 from app.extansions import db
 from app.models import Category, Users
-from app.utils import to_dict, generate_token
+from app.utils import generate_token, to_dict
 
 user_bp = Blueprint("user", __name__)
 
 
-# принимать в этом роуте chat_id телеги и записывать его в базу
 @user_bp.route("/", methods=["POST"])
 def new_user():
     if not request.is_json:

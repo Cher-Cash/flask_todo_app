@@ -1,8 +1,10 @@
-import pytest
 import json
+
+import pytest
+
 from app import create_app
 from app.extansions import db
-from app.models import Users, Category
+from app.models import Category, Users
 
 
 @pytest.fixture
@@ -12,7 +14,7 @@ def test_app():
         {
             "SQLALCHEMY_DATABASE_URI": "sqlite:///:memory:",
             "SQLALCHEMY_TRACK_MODIFICATIONS": False,
-        }
+        },
     )
     with app.app_context():
         db.create_all()
@@ -45,7 +47,7 @@ def test_create_user_success(test_app, client):
     assert user is not None
 
 
-def test_create_user_empty_json(test_app, client):
+def test_create_user_empty_json(client):
     response = client.post(
         "/user/",
         data=json.dumps({}),
@@ -55,7 +57,7 @@ def test_create_user_empty_json(test_app, client):
     assert response.json["error"] == "Не был передан JSON"
 
 
-def test_create_user_missing_json(test_app, client):
+def test_create_user_missing_json(client):
     response = client.post("/user/")
     assert response.status_code == 415
     assert response.json["error"] == "Content-Type must be application/json"
@@ -68,7 +70,7 @@ def test_patch_user_success(test_app, client):
         "/user/",
         data=json.dumps({"username": "Oleg"}),
         content_type="application/json",
-        headers={"token": user.token, "id": user.id}
+        headers={"token": user.token, "id": user.id},
     )
     assert response.status_code == 200
     assert response.json["message"] == "Пользователь Oleg обновлен"
@@ -84,7 +86,7 @@ def test_patch_user_empty_json(test_app, client):
         "/user/",
         data=json.dumps({}),
         content_type="application/json",
-        headers={"token": user.token, "id": user.id}
+        headers={"token": user.token, "id": user.id},
     )
     assert response.status_code == 400
     assert response.json["error"] == "Не получены данные"
@@ -95,7 +97,7 @@ def test_patch_user_missing_json(test_app, client):
         user = Users.query.filter_by(title="testuser").first()
     response = client.patch(
         "/user/",
-        headers={"token": user.token, "id": user.id}
+        headers={"token": user.token, "id": user.id},
     )
     assert response.status_code == 415
     assert response.json["error"] == "Content-Type must be application/json"
@@ -106,6 +108,6 @@ def test_get_user_categories_success(test_app, client):
         user = Users.query.filter_by(title="testuser").first()
     response = client.get(
         "/user/categories",
-        headers={"token": user.token, "id": user.id}
+        headers={"token": user.token, "id": user.id},
     )
     assert response.status_code == 200

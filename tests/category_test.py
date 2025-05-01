@@ -1,8 +1,10 @@
-import pytest
 import json
+
+import pytest
+
 from app import create_app
 from app.extansions import db
-from app.models import Users, Category
+from app.models import Category, Users
 
 
 @pytest.fixture
@@ -12,7 +14,7 @@ def test_app():
         {
             "SQLALCHEMY_DATABASE_URI": "sqlite:///:memory:",
             "SQLALCHEMY_TRACK_MODIFICATIONS": False,
-        }
+        },
     )
     with app.app_context():
         db.create_all()
@@ -40,7 +42,7 @@ def test_create_category_missing_json(client, test_app):
         user = Users.query.filter_by(title="testuser").first()
     response = client.post(
         "/categories/",
-        headers={"token": user.token, "id": user.id}
+        headers={"token": user.token, "id": user.id},
     )
     assert response.status_code == 415
     assert response.json["error"] == "Content-Type must be application/json"
@@ -53,7 +55,7 @@ def test_create_category_empty_json(client, test_app):
         "/categories/",
         data=json.dumps({}),
         content_type="application/json",
-        headers={"token": user.token, "id": user.id}
+        headers={"token": user.token, "id": user.id},
     )
     assert response.status_code == 415
     assert response.json["error"] == "Тело запроса пустое"
@@ -66,7 +68,7 @@ def test_create_category_wrong_title(client, test_app):
         "/categories/",
         data=json.dumps({"cat_name": "Test Category"}),
         content_type="application/json",
-        headers={"token": user.token, "id": user.id}
+        headers={"token": user.token, "id": user.id},
     )
     assert response.status_code == 400
 
@@ -78,7 +80,7 @@ def test_create_category_invalid_token(client, test_app):
         "/categories/",
         data=json.dumps({"title": "Test Category"}),
         content_type="application/json",
-        headers={"token": "InvalidToken", "id": user.id}
+        headers={"token": "InvalidToken", "id": user.id},
     )
     assert response.status_code == 403
     assert response.json["error"] == "Invalid user"
@@ -92,7 +94,7 @@ def test_create_category_success(client, test_app):
         "/categories/",
         data=json.dumps(new_category),
         content_type="application/json",
-        headers={"token": user.token, "id": user.id}
+        headers={"token": user.token, "id": user.id},
     )
     assert response.status_code == 200
     assert response.json["message"] == "Категория Test Category успешно создана"
@@ -108,10 +110,10 @@ def test_patch_category_success(client, test_app):
         category = Category.query.first()
     data = {"title": "Updated Category"}
 
-    response = client.patch(f'/categories/{category.id}',
+    response = client.patch(f"/categories/{category.id}",
                             headers={"token": user.token, "id": user.id},
                             data=json.dumps(data),
-                            content_type='application/json')
+                            content_type="application/json")
 
     assert response.status_code == 200
     assert response.json["message"] == "Категория Updated Category обновлена"
@@ -126,10 +128,10 @@ def test_patch_category_invalid_user(client, test_app):
         category = Category.query.first()
     data = {"title": "Updated Category"}
 
-    response = client.patch(f'/categories/{category.id}',
+    response = client.patch(f"/categories/{category.id}",
                             headers={"token": user2.token, "id": user2.id},
                             data=json.dumps(data),
-                            content_type='application/json')
+                            content_type="application/json")
     assert response.status_code == 403
     assert response.json["error"] == "Invalid user"
 
@@ -138,8 +140,8 @@ def test_patch_category_no_json(client, test_app):
     with test_app.app_context():
         user = Users.query.filter_by(title="testuser").first()
         category = Category.query.first()
-    response = client.patch(f'/categories/{category.id}',
-                            headers={"token": user.token, "id": user.id},)
+    response = client.patch(f"/categories/{category.id}",
+                            headers={"token": user.token, "id": user.id})
     assert response.status_code == 415
     assert response.json["error"] == "Content-Type must be application/json"
 
@@ -147,8 +149,8 @@ def test_patch_category_no_json(client, test_app):
 def test_patch_category_category_not_found(client, test_app):
     with test_app.app_context():
         user = Users.query.filter_by(title="testuser").first()
-    response = client.patch('/categories/9999',
+    response = client.patch("/categories/9999",
                             headers={"token": user.token, "id": user.id},
-                            data=json.dumps({'title': 'New Category'}),
-                            content_type='application/json')
+                            data=json.dumps({"title": "New Category"}),
+                            content_type="application/json")
     assert response.status_code == 404
