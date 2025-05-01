@@ -13,16 +13,21 @@ task_bp = Blueprint("task_bp", __name__)
 @task_bp.route("/", methods=["POST"])
 @token_required
 def new_task(user):
+    if not request.is_json:
+        return jsonify({"error": "Content-Type must be application/json"}), 415
     data = request.get_json()
     if not data:
-        return jsonify({"error": "Не был передан JSON"}), 400
+        return jsonify({"error": "Тело запроса пустое"}), 415
     title = data.get("title")
     description = data.get("description")
     created_on = datetime.now()
     category_id = data.get("category_id")
     status = data.get("status")
     date = data.get("dead_line")
-    dead_line = datetime.strptime(date, "%Y-%m-%d %H:%M:%S")
+    try:
+        dead_line = datetime.strptime(date, "%Y-%m-%d %H:%M:%S")
+    except ValueError:
+        return jsonify({"error": "Incorrect date format"}), 400
     task_category = Category.query.get_or_404(category_id)
     if task_category.user_id != user.id:
         return jsonify({"error": "Invalid category"}), 403

@@ -22,3 +22,4 @@ jobs:
       run: |
         flake8
         ruff check
+        pytest
